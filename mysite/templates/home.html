@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<html>
+
+<head>
+    <title>Review Summarization</title>
+</head>
+<h1><b>Review Summarization</b></h1>
+<br>
+
+<body>
+    <form id="usrForm" action="store">
+        <textarea id="code" name="usrCode" form="usrForm" placeholder="Paste URL">{{userCode}}</textarea><br>
+        <input type="submit" name="submit code" id="sBtn"><br>
+        <textarea readonly id="summary" name="usrSummary"
+            placeholder="Summary will be displayed here">{{summary}}</textarea><br>
+    </form>
+</body>
+
+</html>
+
+<style>
+    body {
+        text-align: center;
+        background: #f4f4f9;
+        outline: none;
+        font-size: 14px;
+    }
+
+    #code {
+        width: 45%;
+        margin: auto;
+    }
+
+    #sBtn {
+        margin: 10px;
+        cursor: pointer;
+    }
+
+    #summary {
+        width: 45%;
+        min-height: 500px;
+        overflow: scroll;
+        margin: auto;
+        display: inline-block;
+        outline: none;
+    }
+
+    canvas {
+        width: 45%;
+        height: 500px;
+        border: 1px solid black;
+        border-radius: 3px;
+    }
+</style>
+{% endblock %}
