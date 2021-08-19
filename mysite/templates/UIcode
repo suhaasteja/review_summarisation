@@ -1,0 +1,152 @@
+base.html - 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Major Project</title>
+</head>
+<body bgcolor="beige">
+    {% block content %}
+    {% endblock %}
+</body>
+</html>
+--------------------------------------
+home.html - 
+{% extends 'base.html' %}
+
+{% block content %}
+<html>
+
+<head>
+    <title>Opinion Summarization using Deep Learning</title>
+</head>
+<h1><b></b>Opinion Summarization using Deep Learning</b></h1>
+<br>
+
+<body>
+    <form id="usrForm" action="store">
+        <textarea id="code" name="usrCode" form="usrForm" placeholder="Paste URL">{{userCode}}</textarea><br>
+        <input type="submit" name="submit code" id="sBtn"><br>
+        <textarea readonly id="reviews" name="usrReview"
+            placeholder="Reviews will be displayed here">{{reviews}}</textarea>
+        <textarea readonly id="summary" name="usrSummary"
+            placeholder="Summary will be displayed here">{{summary}}</textarea><br>
+    </form>
+</body>
+
+</html>
+
+<style>
+    body {
+        text-align: center;
+        background: beige;
+        outline: none;
+        font-size: 15px;
+    }
+
+
+    #code {
+        width: 45%;
+        margin: auto;
+        font-size: small;
+        outline: none;
+        border: 2px solid black
+    }
+
+    #sBtn {
+        margin: 20px;
+        display: inline-block;
+        cursor: pointer;
+        text-align: center;
+        text-decoration: none;
+        outline: none;
+        color: #fff;
+        background-color: #4CAF50;
+        border: 2px solid black;
+        border-radius: 5px;
+        box-shadow: 0 0px #999;
+    }
+
+    #sBtn:hover {
+        background-color: #3e8e41
+    }
+
+    #sBtn:active {
+        background-color: #3e8e41;
+        box-shadow: 0 5px #666;
+        transform: translateY(4px);
+    }
+
+
+    #summary, #reviews{
+        width: 45%;
+        min-height: 480px;
+        font-size: 15px;
+        word-spacing: inherit;
+        overflow: scroll;
+        margin: auto;
+        display: inline-block;
+        outline: none;
+        border: 2px solid black
+    }
+
+    
+</style>{% endblock %}
+-------------------------------------------------
+views.py - 
+
+from bs4 import BeautifulSoup
+import pandas as pd
+import requests
+from django.shortcuts import render
+from django.http import HttpResponse
+
+# Create your views here.
+
+def home(request):
+    return render(request, 'home.html')
+
+def get_soup(url):
+    r = requests.get("http://localhost:8050/render.html", params={'url': url, 'wait': 2})
+    soup = BeautifulSoup(r.text, 'html.parser')
+    return soup
+
+def get_reviews(soup):
+    reviewlist = []
+    reviews = soup.find_all('div', {'data-hook': 'review'})
+    for item in reviews:
+        review = item.find('span', {'data-hook': 'review-body'}).text.strip()
+        reviewlist.append(review)
+    return reviewlist
+
+def Reviews(url):
+    soup = get_soup(url)
+    reviewlist = get_reviews(soup)
+    finalReviewList = str(reviewlist).replace('\n', '\n\n')
+    return reviewlist
+
+def get_summary():
+
+    return "summary"
+
+def store(request):
+    url = request.GET['usrCode']
+    reviewsList = Reviews(url)
+    reviewsDataset = []
+    for r in reviewsList:
+        r = str(r).replace('Your browser does not support HTML5 video.', '').replace('xa0', '').replace("',", '",')
+        reviewsDataset.append(r)
+    reviewsDisplay = str(reviewsList).replace('[','').replace(']', '').replace('Read more', '').replace('Your browser does not support HTML5 video.', '').replace('xa0', '').replace("',", '",').replace('",', '"\n\n')
+    summary = get_summary()
+    df = pd.read_csv("dataset3.csv")
+    dfTemp = pd.DataFrame([[reviewsDataset, summary]], columns=['Review', 'Summary'])
+    dfFinal = df.append(dfTemp, ignore_index=True)
+    dfFinal.to_csv('dataset3.csv', index=False)
+    return render(request, 'home.html', {'summary' : summary, 'userCode' : url, 'reviews': reviewsDisplay})
+
+
+
+
+

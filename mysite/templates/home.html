@@ -4,15 +4,17 @@
 <html>
 
 <head>
-    <title>Review Summarization</title>
+    <title>Opinion Summarization using Deep Learning</title>
 </head>
-<h1><b>Review Summarization</b></h1>
+<h1><b></b>Opinion Summarization using Deep Learning</b></h1>
 <br>
 
 <body>
     <form id="usrForm" action="store">
         <textarea id="code" name="usrCode" form="usrForm" placeholder="Paste URL">{{userCode}}</textarea><br>
         <input type="submit" name="submit code" id="sBtn"><br>
+        <textarea readonly id="reviews" name="usrReview"
+            placeholder="Reviews will be displayed here">{{reviews}}</textarea>
         <textarea readonly id="summary" name="usrSummary"
             placeholder="Summary will be displayed here">{{summary}}</textarea><br>
     </form>
@@ -23,35 +25,56 @@
 <style>
     body {
         text-align: center;
-        background: #f4f4f9;
+        background: beige;
         outline: none;
-        font-size: 14px;
+        font-size: 15px;
     }
+
 
     #code {
         width: 45%;
         margin: auto;
+        font-size: small;
+        outline: none;
+        border: 2px solid black
     }
 
     #sBtn {
-        margin: 10px;
+        margin: 20px;
+        display: inline-block;
         cursor: pointer;
+        text-align: center;
+        text-decoration: none;
+        outline: none;
+        color: #fff;
+        background-color: #4CAF50;
+        border: 2px solid black;
+        border-radius: 5px;
+        box-shadow: 0 0px #999;
     }
 
-    #summary {
+    #sBtn:hover {
+        background-color: #3e8e41
+    }
+
+    #sBtn:active {
+        background-color: #3e8e41;
+        box-shadow: 0 5px #666;
+        transform: translateY(4px);
+    }
+
+
+    #summary, #reviews{
         width: 45%;
-        min-height: 500px;
+        min-height: 480px;
+        font-size: 15px;
+        word-spacing: inherit;
         overflow: scroll;
         margin: auto;
         display: inline-block;
         outline: none;
+        border: 2px solid black
     }
 
-    canvas {
-        width: 45%;
-        height: 500px;
-        border: 1px solid black;
-        border-radius: 3px;
-    }
-</style>
-{% endblock %}
+    
+</style>{% endblock %}
